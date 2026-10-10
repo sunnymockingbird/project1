@@ -6,7 +6,10 @@ from masks import get_mask_account, get_mask_card_number
 def mask_account_card(info: str) -> str:
     """Функция обрабатывающая информацию о картах и счетах"""
 
-    category, number = info.split()
+    try:
+        category, number = info.split()
+    except ValueError:
+        return 'Данные введены неверно'
     if category.lower() == "счет":
         return " ".join([category, get_mask_account(number)])
     return " ".join([category, get_mask_card_number(number)])
