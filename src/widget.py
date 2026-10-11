@@ -6,13 +6,12 @@ from masks import get_mask_account, get_mask_card_number
 def mask_account_card(info: str) -> str:
     """Функция обрабатывающая информацию о картах и счетах"""
 
-    try:
-        category, number = info.split()
-    except ValueError:
+    parts = info.split()
+    if not parts or not parts[-1].isdigit():
         return 'Данные введены неверно'
-    if category.lower() == "счет":
-        return " ".join([category, get_mask_account(number)])
-    return " ".join([category, get_mask_card_number(number)])
+    elif parts[0].lower() == "счет":
+        return " ".join([*parts[:-1], get_mask_account(parts[-1])])
+    return " ".join([*parts[:-1], get_mask_card_number(parts[-1])])
 
 
 def get_date(info_date: str) -> str:
