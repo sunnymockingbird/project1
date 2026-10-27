@@ -1,5 +1,5 @@
 [flake8]
 max-line-length = 119
-exclude = .tests, __pycache__
-ignore = E203
+ignore = E203, W503
+exclude = .idea, .mypy_cache, .git, __pycache__, venv, .venv
 show-source = True
