@@ -3,7 +3,6 @@ from operator import itemgetter
 
 def filter_by_state(data: list[dict], state: str = "EXECUTED") -> list[dict]:
     """Функция, фильтрующая список словарей по значению ключа state"""
-
     return [item for item in data if item.get("state") == state]
 
 
