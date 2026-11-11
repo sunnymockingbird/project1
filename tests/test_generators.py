@@ -3,7 +3,7 @@ import pytest
 from src.generators import (
     card_number_generator,
     filter_by_currency,
-    looking_name_of_currency,
+    looking_target_key,
     transaction_descriptions,
 )
 
@@ -52,7 +52,7 @@ from src.generators import (
     ],
 )
 def test_looking_name_of_currency(data, expected):
-    assert looking_name_of_currency(data) == expected
+    assert looking_target_key(data) == expected
 
 
 @pytest.fixture

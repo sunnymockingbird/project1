@@ -1,7 +1,7 @@
 from typing import Iterator
 
 
-def looking_name_of_currency(dct: dict, target_key: str = "currency") -> str | None:
+def looking_target_key(dct: dict, target_key: str = "currency") -> str | None:
     """Функция, возвращающая наименование валюты, если она есть в словаре"""
     if not isinstance(dct, dict):
         return None
@@ -12,7 +12,7 @@ def looking_name_of_currency(dct: dict, target_key: str = "currency") -> str | N
         elif isinstance(currency_data, str):
             return currency_data
     for value in dct.values():
-        result = looking_name_of_currency(value, target_key)
+        result = looking_target_key(value, target_key)
         if result is not None:
             return result
     return None
@@ -20,7 +20,7 @@ def looking_name_of_currency(dct: dict, target_key: str = "currency") -> str | N
 
 def filter_by_currency(data: list[dict], currency_name: str) -> Iterator[dict]:
     """Возвращает итератор словарей, отобранных по наименованию валюты"""
-    return (el for el in data if looking_name_of_currency(el) == currency_name)
+    return (el for el in data if looking_target_key(el) == currency_name)
 
 
 def transaction_descriptions(transactions: list[dict]) -> Iterator[str]:
