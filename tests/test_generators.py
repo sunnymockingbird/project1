@@ -3,7 +3,7 @@ import pytest
 from src.generators import (
     card_number_generator,
     filter_by_currency,
-    looking_name_of_currency,
+    looking_target_key,
     transaction_descriptions,
 )
 
@@ -51,12 +51,12 @@ from src.generators import (
         ),
     ],
 )
-def test_looking_name_of_currency(data, expected):
-    assert looking_name_of_currency(data) == expected
+def test_looking_name_of_currency(data: dict, expected: str|None) -> None:
+    assert looking_target_key(data) == expected
 
 
 @pytest.fixture
-def sample_list_of_dict():
+def sample_list_of_dict() -> list[dict]:
     """Фикстура с данными для фильтрации"""
     return [
         {
@@ -98,21 +98,21 @@ def sample_list_of_dict():
     ]
 
 
-def test_filter_by_currency(sample_list_of_dict):
+def test_filter_by_currency(sample_list_of_dict: list[dict]) -> None:
     transactions_iterator = filter_by_currency(sample_list_of_dict, "USD")
     assert next(transactions_iterator)["id"] == 939719570
     assert next(transactions_iterator)["id"] == 245561903
     assert next(transactions_iterator)["id"] == 558910244
 
 
-def test_filter_by_currency_with_empty_list():
+def test_filter_by_currency_with_empty_list() -> None:
     transactions_iterator = filter_by_currency([], "USD")
     with pytest.raises(StopIteration):
         next(transactions_iterator)
 
 
 @pytest.fixture
-def sample_of_transactions():
+def sample_of_transactions() -> list[dict]:
     """Фикстура для теста генератора транзакций"""
     return [
         {"description": "Перевод организации", "date": "2019-04-04T23:20:05.206878"},
@@ -121,20 +121,20 @@ def sample_of_transactions():
     ]
 
 
-def test_transaction_descriptions(sample_of_transactions):
+def test_transaction_descriptions(sample_of_transactions: list[dict]) -> None:
     transactions = transaction_descriptions(sample_of_transactions)
     assert next(transactions) == "Перевод организации"
     assert next(transactions) == "Перевод со счета на счет"
     assert next(transactions) == "Перевод с карты на карту"
 
 
-def test_transaction_descriptions_with_empty_list():
+def test_transaction_descriptions_with_empty_list() -> None:
     transactions = transaction_descriptions([])
     with pytest.raises(StopIteration):
         next(transactions)
 
 
-def test_card_number_generator():
+def test_card_number_generator() -> None:
     cards = card_number_generator(1, 3)
     assert next(cards) == "0000 0000 0000 0001"
     assert next(cards) == "0000 0000 0000 0002"
@@ -144,19 +144,19 @@ def test_card_number_generator():
         next(cards)
 
 
-def test_card_number_generator_single_value():
+def test_card_number_generator_single_value() -> None:
     cards = card_number_generator(999, 999)
     assert next(cards) == "0000 0000 0000 0999"
 
 
-def test_card_number_generator_large_number():
+def test_card_number_generator_large_number() -> None:
     cards = card_number_generator(9999, 10001)
     assert next(cards) == "0000 0000 0000 9999"
     assert next(cards) == "0000 0000 0001 0000"
     assert next(cards) == "0000 0000 0001 0001"
 
 
-def test_card_number_generator_with_wrong_boundaries():
+def test_card_number_generator_with_wrong_boundaries() -> None:
     cards = card_number_generator(3, 1)
     assert next(cards) == "0000 0000 0000 0001"
     assert next(cards) == "0000 0000 0000 0002"

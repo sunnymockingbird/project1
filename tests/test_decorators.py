@@ -1,4 +1,5 @@
 import os
+from typing import Callable
 
 import pytest
 
@@ -22,7 +23,7 @@ def sample_div(x: int, y: int) -> float:
         (sample_div, (10, 5), "sample_div"),
     ],
 )
-def test_console_out1(capsys, func, args, expected_name) -> str:
+def test_console_out1(capsys: pytest.CaptureFixture[str], func: Callable, args: list[tuple], expected_name: str) -> None:
     func(*args)
     captured = capsys.readouterr()
     expected_message = f"{expected_name} была вызвана и успешно завершила работу"
@@ -36,7 +37,7 @@ def test_console_out1(capsys, func, args, expected_name) -> str:
         (sample_div, (10, 0), ZeroDivisionError, "sample_div error: ZeroDivisionError. Inputs: (10, 0), {}"),
     ],
 )
-def test_console_out2(capsys, func, args, expected_error, expected_message) -> str:
+def test_console_out2(capsys: pytest.CaptureFixture[str], func: Callable, args: list[tuple], expected_error: type[Exception], expected_message: str) -> None:
     with pytest.raises(expected_error):
         func(*args)
     captured = capsys.readouterr()

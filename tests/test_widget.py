@@ -16,7 +16,7 @@ from src.widget import get_date, mask_account_card
         ("12345", "Данные введены неверно"),
     ],
 )
-def test_mask_account_card(user_input, expected):
+def test_mask_account_card(user_input: str, expected:str) -> None:
     assert mask_account_card(user_input) == expected
 
 
@@ -28,11 +28,11 @@ def test_mask_account_card(user_input, expected):
         ("2025-01-05T12:00:00.000000", "05.01.2025"),
     ],
 )
-def test_get_date_success(date_string, expected):
+def test_get_date_success(date_string: str, expected: str) -> None:
     assert get_date(date_string) == expected
 
 
 @pytest.mark.parametrize("bad_date", ["", "18/03/2025"])
-def test_get_date_errors(bad_date):
+def test_get_date_errors(bad_date: str) -> None:
     with pytest.raises(ValueError):
         get_date(bad_date)

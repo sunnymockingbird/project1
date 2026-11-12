@@ -4,7 +4,7 @@ from src.processing import filter_by_state, sort_by_date
 
 
 @pytest.fixture
-def sample_data():
+def sample_data() -> list[dict]:
     """Фикстура с тестовыми данными для фильтрации"""
     return [
         {"id": 1234, "state": "EXECUTED", "date": "2019-07-03T18:35:29.512364"},
@@ -24,23 +24,23 @@ def sample_data():
         ("NONE", 0, []),
     ],
 )
-def test_filter_by_state(sample_data, state, expected_count, expected_ids):
+def test_filter_by_state(sample_data: list[dict], state: str, expected_count: int, expected_ids: list[int|None]) -> None:
     result = filter_by_state(sample_data, state)
     assert len(result) == expected_count
     assert [item["id"] for item in result] == expected_ids
 
 
-def test_filter_by_state_1():
+def test_filter_by_state_1() -> None:
     assert filter_by_state([], "EXECUTED") == []
 
 
-def test_filter_by_state_2(sample_data):
+def test_filter_by_state_2(sample_data: list[dict]) -> None:
     result = filter_by_state(sample_data)
     assert len(result) == 2
     assert [item["id"] for item in result] == [1234, 3147599]
 
 
-def test_sort_by_date(sample_data):
+def test_sort_by_date(sample_data: list[dict]) -> None:
     result = sort_by_date(sample_data)
     assert [item["id"] for item in result] == [144875, 1234, 4875, 3147599, 99999]
 
@@ -61,6 +61,6 @@ sorting_test_data = [
         ([], True, []),  # Пустой список
     ],
 )
-def test_sort_by_date_1(data, descending, expected_ids):
+def test_sort_by_date_1(data: list[dict], descending: bool, expected_ids: list[int]) -> None:
     result = sort_by_date(data, descending)
     assert [item["id"] for item in result] == expected_ids
