@@ -9,6 +9,7 @@ def log(filename: str | None = None) -> Callable:
     При успешном выполнении функции записывает в файл или выводит в консоль
     время вызова функции, в противном случае — имя и тип возникшей ошибки.
     """'''
+
     def wrapper(func: Callable) -> Callable:
         @wraps(func)
         def inner(*args: Any, **kwargs: Any) -> Any:
