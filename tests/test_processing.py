@@ -24,7 +24,9 @@ def sample_data() -> list[dict]:
         ("NONE", 0, []),
     ],
 )
-def test_filter_by_state(sample_data: list[dict], state: str, expected_count: int, expected_ids: list[int|None]) -> None:
+def test_filter_by_state(
+    sample_data: list[dict], state: str, expected_count: int, expected_ids: list[int | None]
+) -> None:
     result = filter_by_state(sample_data, state)
     assert len(result) == expected_count
     assert [item["id"] for item in result] == expected_ids

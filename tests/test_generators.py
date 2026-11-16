@@ -51,7 +51,7 @@ from src.generators import (
         ),
     ],
 )
-def test_looking_name_of_currency(data: dict, expected: str|None) -> None:
+def test_looking_name_of_currency(data: dict, expected: str | None) -> None:
     assert looking_target_key(data) == expected
 
 
