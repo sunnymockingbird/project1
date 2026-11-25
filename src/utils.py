@@ -2,11 +2,13 @@ import csv
 import json
 import logging
 from json import JSONDecodeError
+from pathlib import Path
 
 import pandas as pd
 
+BASE_DIR = Path(__file__).resolve().parent.parent
 logger = logging.getLogger(__name__)
-file_handler = logging.FileHandler("logs/utils.log", "w", encoding="utf-8")
+file_handler = logging.FileHandler(BASE_DIR / "logs" / "utils.log", "w", encoding="utf-8")
 file_formatter = logging.Formatter("%(asctime)s %(name)s %(levelname)s: %(message)s")
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)

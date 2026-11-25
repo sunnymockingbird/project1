@@ -3,9 +3,9 @@ from datetime import datetime
 from src.masks import get_mask_account, get_mask_card_number
 
 
-def mask_account_card(info: str) -> str:
+def mask_account_card(info: str | None) -> str:
     """Функция обрабатывающая информацию о картах и счетах"""
-    parts = info.split()
+    parts = info.split() if info else []
     if len(parts) < 2 or not parts[-1].isdigit():
         return "Данные введены неверно"
     elif parts[0].lower() == "счет":
