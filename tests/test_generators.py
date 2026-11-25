@@ -3,6 +3,7 @@ import pytest
 from src.generators import (
     card_number_generator,
     filter_by_currency,
+    get_currency_code,
     looking_target_key,
     transaction_descriptions,
 )
@@ -38,7 +39,7 @@ from src.generators import (
             "EUR",
         ),
         # Тест 3: Валюта на верхнем уровне строкой
-        ({"id": 142264268, "state": "EXECUTED", "currency": "RUB"}, "RUB"),
+        ({"id": 142264268, "state": "EXECUTED", "currency_code": "RUB"}, "RUB"),
         # Тест 4: Валюты вообще нет в словаре
         (
             {
@@ -51,62 +52,34 @@ from src.generators import (
         ),
     ],
 )
-def test_looking_name_of_currency(data: dict, expected: str | None) -> None:
-    assert looking_target_key(data) == expected
-
-
-@pytest.fixture
-def sample_list_of_dict() -> list[dict]:
-    """Фикстура с данными для фильтрации"""
-    return [
-        {
-            "id": 939719570,
-            "state": "EXECUTED",
-            "date": "2018-06-30T02:08:58.425572",
-            "operationAmount": {"amount": "9824.07", "currency": {"name": "USD", "code": "USD"}},
-            "description": "Перевод организации",
-            "from": "Счет 75106830613657916952",
-            "to": "Счет 11776614605963066702",
-        },
-        {
-            "id": 142264268,
-            "state": "EXECUTED",
-            "date": "2019-04-04T23:20:05.206878",
-            "operationAmount": {"amount": "79114.93", "currency": {"name": "EUR", "code": "EUR"}},
-            "description": "Перевод со счета на счет",
-            "from": "Счет 19708645243227258542",
-            "to": "Счет 75651667383060284188",
-        },
-        {
-            "id": 245561903,
-            "state": "EXECUTED",
-            "date": "2020-01-15T11:45:12.105432",
-            "operationAmount": {"amount": "1500.00", "currency": {"name": "USD", "code": "USD"}},
-            "description": "Оплата услуг",
-            "from": "Счет 45612378901234567890",
-            "to": "Счет 98765432109876543210",
-        },
-        {
-            "id": 558910244,
-            "state": "EXECUTED",
-            "date": "2021-08-22T16:05:30.994112",
-            "operationAmount": {"amount": "432.50", "currency": {"name": "USD", "code": "USD"}},
-            "description": "Перевод другу",
-            "from": "Счет 11223344556677889900",
-            "to": "Счет 55667788990011223344",
-        },
-    ]
+def test_get_currency_code(data: dict, expected: str | None) -> None:
+    assert get_currency_code(data) == expected
 
 
 def test_filter_by_currency(sample_list_of_dict: list[dict]) -> None:
-    transactions_iterator = filter_by_currency(sample_list_of_dict, "USD")
+    transactions_iterator = filter_by_currency(sample_list_of_dict, "RUB")
     assert next(transactions_iterator)["id"] == 939719570
     assert next(transactions_iterator)["id"] == 245561903
     assert next(transactions_iterator)["id"] == 558910244
+    with pytest.raises(StopIteration):
+        next(transactions_iterator)
+
+
+def test_filter_by_currency_with_missing_currency(sample_list_of_dict: list[dict]) -> None:
+    transactions_iterator = filter_by_currency(sample_list_of_dict, "USD")
+    with pytest.raises(StopIteration):
+        next(transactions_iterator)
+
+
+def test_looking_for_target_key(sample_list_of_dict: list[dict]) -> None:
+    expected_result = ["9824.07", "79114.93", "1500.00", None]
+    for i, el in enumerate(sample_list_of_dict):
+        returning_value = looking_target_key(el, "amount")
+        assert returning_value == expected_result[i]
 
 
 def test_filter_by_currency_with_empty_list() -> None:
-    transactions_iterator = filter_by_currency([], "USD")
+    transactions_iterator = filter_by_currency([], "RUB")
     with pytest.raises(StopIteration):
         next(transactions_iterator)
 

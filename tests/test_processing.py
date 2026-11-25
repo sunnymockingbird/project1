@@ -1,6 +1,8 @@
+from collections import Counter
+
 import pytest
 
-from src.processing import filter_by_state, sort_by_date
+from src.processing import filter_by_state, process_bank_operations, process_bank_search, sort_by_date
 
 
 @pytest.fixture
@@ -66,3 +68,45 @@ sorting_test_data = [
 def test_sort_by_date_1(data: list[dict], descending: bool, expected_ids: list[int]) -> None:
     result = sort_by_date(data, descending)
     assert [item["id"] for item in result] == expected_ids
+
+
+def test_process_bank_search_one_match(sample_list_of_dict: list[dict]) -> None:
+    result = process_bank_search(sample_list_of_dict, "оплата")
+    assert result == [sample_list_of_dict[2]]
+
+
+def test_process_bank_search_few_matches(sample_list_of_dict: list[dict]) -> None:
+    result = process_bank_search(sample_list_of_dict, "перевод")
+    assert result == sample_list_of_dict[0:2] + [sample_list_of_dict[3]]
+
+
+def test_process_bank_search_no_matches(sample_list_of_dict: list[dict]) -> None:
+    result = process_bank_search(sample_list_of_dict, "пополнение")
+    assert result == []
+
+
+@pytest.fixture
+def sample_operations() -> list[dict]:
+    """Фикстура для проверки process_bank_operations"""
+    return [
+        {"description": "Перевод организации"},
+        {"description": "Перевод организации"},
+        {"description": "Перевод со счета на счет"},
+        {"description": "Оплата услуг"},
+        {"description": "Перевод другу"},
+        {"description": "Оплата услуг"},
+    ]
+
+
+@pytest.mark.parametrize(
+    "categories, expected",
+    [
+        (["Перевод организации", "Оплата услуг"], Counter({"Перевод организации": 2, "Оплата услуг": 2})),
+        (["Перевод организации", "Пополнение счета"], Counter({"Перевод организации": 2, "Пополнение счета": 0})),
+        (["Пополнение счета", "Оплата за товар"], Counter({"Пополнение счета": 0, "Оплата за товар": 0})),
+        ([], Counter([])),
+    ],
+)
+def test_process_bank_operations(sample_operations: list[dict], categories: list, expected: Counter) -> None:
+    result = process_bank_operations(sample_operations, categories)
+    assert result == expected
