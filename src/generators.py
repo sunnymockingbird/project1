@@ -1,16 +1,13 @@
-from typing import Iterator
+from typing import Any, Iterator
 
 
-def looking_target_key(dct: dict, target_key: str = "currency") -> str | None:
-    """Функция, возвращающая наименование валюты, если она есть в словаре"""
+def looking_target_key(dct: dict, target_key: str) -> Any:
+    """Функция, возвращающая значение ключа, если он есть в словаре"""
     if not isinstance(dct, dict):
         return None
     if target_key in dct:
-        currency_data = dct[target_key]
-        if isinstance(currency_data, dict):
-            return currency_data.get("name")
-        elif isinstance(currency_data, str):
-            return currency_data
+        value_of_key = dct[target_key]
+        return value_of_key
     for value in dct.values():
         result = looking_target_key(value, target_key)
         if result is not None:
@@ -18,9 +15,21 @@ def looking_target_key(dct: dict, target_key: str = "currency") -> str | None:
     return None
 
 
-def filter_by_currency(data: list[dict], currency_name: str) -> Iterator[dict]:
-    """Возвращает итератор словарей, отобранных по наименованию валюты"""
-    return (el for el in data if looking_target_key(el) == currency_name)
+def get_currency_code(dct: dict) -> str | None:
+    """Возвращает код валюты из словаря."""
+    if "currency_code" in dct:
+        result = dct["currency_code"]
+        return result if isinstance(result, str) else None
+    currency = looking_target_key(dct, "currency")
+    if isinstance(currency, dict):
+        result = currency.get("code")
+        return result if isinstance(result, str) else None
+    return None
+
+
+def filter_by_currency(data: list[dict], currency_code: str) -> Iterator[dict]:
+    """Возвращает итератор словарей, отобранных по коду валюты"""
+    return (el for el in data if get_currency_code(el) == currency_code)
 
 
 def transaction_descriptions(transactions: list[dict]) -> Iterator[str]:

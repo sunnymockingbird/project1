@@ -3,7 +3,7 @@ import os
 import requests
 from dotenv import load_dotenv
 
-from src.generators import looking_target_key
+from src.generators import get_currency_code, looking_target_key
 
 load_dotenv()
 API_KEY = os.getenv("API_KEY", "")
@@ -12,7 +12,7 @@ API_KEY = os.getenv("API_KEY", "")
 def convert(transaction: dict) -> float:
     """Осуществляет конвертацию суммы в рубли, если она задана в USD или EUR"""
 
-    currency = looking_target_key(transaction)
+    currency = get_currency_code(transaction)
     amount = looking_target_key(transaction, "amount")
     if currency is None or amount is None:
         raise ValueError("Валюта/Сумма транзакции не найдена")
